@@ -1,0 +1,32 @@
+{
+	"$schema": "https://raw.githubusercontent.com/untrustedmodders/plugify/refs/heads/main/schemas/plugin.schema.json",
+	"version": "${VIP_NOFALLDAMAGE_VERSION}",
+	"name": "vip_nofalldamage",
+	"description": "No fall damage for VIPs: the 'nofalldamage' feature (groups.ini, on by default in the production groups) makes fall damage below 4999.0 harmless. The original used the Pisex utils damage pre-hook; the port detours the same engine function through the polyhook plugin (signature from the plugin's own gamedata.jsonc, resolved with s2sdk) and blocks DMG_FALL hits for enabled slots. A port of the ABKAM module '[VIP] No Fall Damage' (vip_nofalldamage).",
+	"author": "ABKAM, ported to Plugify",
+	"website": "https://github.com/untrustedmodders/plugify",
+	"license": "GPL-3.0",
+	"entry": "bin/vip_nofalldamage",
+	"platforms": [],
+	"language": "cpp",
+	"dependencies": [
+		{
+			"name": "s2sdk",
+			"constraints": ">=2.18.2"
+		},
+		{
+			"name": "vip",
+			"constraints": ">=1.0.0"
+		},
+		{
+			"name": "polyhook",
+			"constraints": ">=2.5.2"
+		},
+		{
+			"name": "hudmenu",
+			"constraints": ">=1.0.0",
+			"optional": true
+		}
+	],
+	"methods": []
+}
