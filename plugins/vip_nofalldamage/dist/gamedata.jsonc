@@ -1,0 +1,34 @@
+{
+  // vip_nofalldamage gamedata - s2sdk gamedata format (same schema as the s2sdk plugin's own
+  // gamedata.jsonc), loaded via s2sdk LoadGameConfigFile / GetGameConfigSignature.
+  //
+  // OnTakeDamagePre is the function the Pisex utils plugin detours for
+  // IUtilsApi::HookOnTakeDamagePre (the hook the original VIP_NoFallDamage module used):
+  // the Metamod installation's addons/configs/signatures.ini resolves the same name to this
+  // pattern and installs it with funchook. Pattern taken from that signatures.ini
+  // ("OnTakeDamagePre"; the linuxsteamrt64 pattern, it starts with the GCC frame-pointer prologue
+  // 55 48 89 E5).
+  //
+  // Verified against the current game binary: exactly ONE match, file offset
+  // 0x157BAE0 = VA 0x157CAE0 in libserver.so. The disassembly there is
+  //   push rbp; mov rbp,rsp; push r15/r14/r13/r12; mov rsi,r12; push rbx; mov rdi,rbx;
+  //   sub rsp,0x3088; mov r13,[rdi+0x38]; test r13,r13; je ...           // pawn = service->GetPawn()
+  //   cmpb $0,[r13+0x1880]; ... ucomiss 0x44(r12), 0 ...                 // info->m_flDamage
+  // i.e. the C++ shape the pisex utils assume:
+  //   int OnTakeDamage(CCSPlayer_DamageReactServices* service, CTakeDamageInfo* info)
+  // (service's pawn pointer at +0x38, the damage float at info+0x44). The signatures.ini
+  // comment's search string ("CBaseEntity::TakeDamageOld: damagetype %d with ...") is only the
+  // IDA anchor used to find the function; it lives in a neighbouring function, not in this one.
+  //
+  // The hook resolves the victim slot through s2sdk::PlayerServicesToPlayerSlot(service) and
+  // reads CTakeDamageInfo::m_bitsDamageType / m_flDamage through the schema.
+  "$schema": "https://raw.githubusercontent.com/untrustedmodders/plugify-plugin-s2sdk/refs/heads/main/schemas/gamedata.schema.json",
+  "csgo": {
+    "Signatures": {
+      "OnTakeDamagePre": {
+        "library": "server",
+        "linuxsteamrt64": "55 48 89 E5 41 57 41 56 41 55 41 54 49 89 F4 53 48 89 FB 48 81 EC ? ? ? ? 4C 8B 6F ? 4D 85 ED 0F 84 ? ? ? ? 41 80 BD"
+      }
+    }
+  }
+}
