@@ -12,9 +12,6 @@
         /* polyhook binding slots (defined by polyhook_bindings, filled by the plugify module) */
         __polyhook_*;
 
-        /* hudmenu binding slots (defined by hudmenu_bindings via pisexcompat) */
-        __hudmenu_*;
-
         /* No exported methods: vip_nofalldamage exposes nothing to other plugins. */
 
     local: *;
